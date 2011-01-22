@@ -1,10 +1,15 @@
 #!/bin/bash
 
-moddir=stivan
-baselang=italian
-languages="english french spanish"
+moddir=$1
+baselang=$2
+shift
+shift
+languages=$*
+
+echo $languages
 
 mkdir traify-tmp 2>/dev/null
+mkdir -p $moddir/tra/$baselang 2>/dev/null
 for language in $languages; do
   mkdir -p $moddir/tra/$language/decompiled 2>/dev/null
 done
@@ -27,7 +32,7 @@ for fullpath in `find $moddir -iname *.d -or -iname *.baf -or -iname *.tp* | gre
   if [ -s traify-tmp/$tmpbase.tra ]; then
     mv traify-tmp/$tmpbase.tra $moddir/tra/$baselang/$basetra.tra
 
-    for language in $languages $baselang; do
+    for language in $languages; do
       if grep '@' $fullpath > /dev/null && [ -f $moddir/tra/$language/$basetra.tra ]; then
         weidu --untraify-d $fullpath --untraify-tra $moddir/tra/$language/$basetra.tra --out $moddir/tra/$language/decompiled/$filename
       fi

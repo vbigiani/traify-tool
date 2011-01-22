@@ -1,6 +1,6 @@
 let mod_dir = Sys.argv.(1) ;;
 let base_lang = Sys.argv.(2) ;;
-let langs = Array.to_list (Array.sub Sys.argv 2 (Array.length Sys.argv - 2)) ;;
+let langs = Array.to_list (Array.sub Sys.argv 3 (Array.length Sys.argv - 3)) ;;
 let tra_dir = mod_dir ^ "/tra/";;
 let temp_dir = "tb#traifier_tmp_dir" ;;
 
@@ -131,6 +131,7 @@ let detraify filename path trabase =
 
 let main () =
   mkdir temp_dir;
+  mkdir (Printf.sprintf "%s/tra/%s" mod_dir base_lang);
   List.iter (fun lang -> mkdir (Printf.sprintf "%s/tra/%s/decompiled" mod_dir lang)) langs;
   let to_tra = List.sort compare (find mod_dir is_traificable) in
   List.iter (fun path ->
