@@ -3,7 +3,7 @@ let base_lang = Sys.argv.(2) ;;
 let langs_offset = ref 3 ;;
 let spec_offset = ref false ;;
 let i = ref 3 ;;
-while !i < Array.length Sys.argv - 1 && not !spec_offset do
+while !i < Array.length Sys.argv && not !spec_offset do
 	if Sys.argv.(!i) = "--" then begin
 		langs_offset := !i + 1;
 		spec_offset := true;
