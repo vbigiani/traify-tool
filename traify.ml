@@ -1,6 +1,19 @@
 let mod_dir = Sys.argv.(1) ;;
 let base_lang = Sys.argv.(2) ;;
-let langs = Array.to_list (Array.sub Sys.argv 3 (Array.length Sys.argv - 3)) ;;
+let langs_offset = ref 3 ;;
+let spec_offset = ref false ;;
+let i = ref 3 ;;
+while !i < Array.length Sys.argv - 1 && not !spec_offset do
+	if Sys.argv.(!i) = "--" then begin
+		langs_offset := !i + 1;
+		spec_offset := true;
+	end;
+	incr i;
+done;;
+let params = if !spec_offset then begin
+	String.concat " " (Array.to_list (Array.sub Sys.argv 3 (!langs_offset - 4)));
+end else "";;
+let langs = Array.to_list (Array.sub Sys.argv !langs_offset (Array.length Sys.argv - !langs_offset)) ;;
 let tra_dir = mod_dir ^ "/tra/";;
 let temp_dir = "tb#traifier_tmp_dir" ;;
 
@@ -105,11 +118,11 @@ let rec find where validity =
 
 let traify path tmpfile finaltra =
   if file_size finaltra > 0 then
-    command (Printf.sprintf "weidu --traify %s --out %s --traify-old-tra %s"
-                                            path     tmpfile             finaltra)
+    command (Printf.sprintf "weidu %s --traify %s --out %s --traify-old-tra %s"
+                                   params      path     tmpfile             finaltra)
   else
-    command (Printf.sprintf "weidu --traify %s --out %s"
-                                            path     tmpfile)
+    command (Printf.sprintf "weidu %s --traify %s --out %s"
+                                   params      path     tmpfile)
 ;;
 
 let detraify filename path trabase =
@@ -123,8 +136,8 @@ let detraify filename path trabase =
     let finaltra = tra_dir ^ lang ^ "/" ^ trabase in
     let finalfile = tra_dir ^ lang ^ "/decompiled/" ^ filename in
     if file_size finaltra > 0 then
-      command (Printf.sprintf "weidu --untraify-d %s --untraify-tra %s --out %s"
-                                                   path              finaltra finalfile
+      command (Printf.sprintf "weidu %s --untraify-d %s --untraify-tra %s --out %s"
+                                     params           path              finaltra finalfile
       )
   ) langs
 ;;
